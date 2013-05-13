@@ -208,3 +208,17 @@ func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int
 	code, message, err = c.conn.ReadResponse(2)
 	return
 }
+
+// Retrieve the named file to the given io.Writer.
+func (c *Conn) RetrieveTo(fname string, dconn net.Conn, w io.Writer) (written int64, code int, message string, err error) {
+	code, message, err = c.Cmd(150, "RETR %s", fname)
+	if err != nil {
+		return 0, code, message, err
+	}
+	written, err = io.Copy(w, dconn)
+	if err != nil {
+		return 0, code, message, err
+	}
+	code, message, err = c.conn.ReadResponse(2)
+	return
+}
