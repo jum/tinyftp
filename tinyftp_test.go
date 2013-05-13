@@ -6,7 +6,6 @@ import (
 )
 
 const (
-	//ftp://podaac-ftp.jpl.nasa.gov/allData/oscar/preview/L4/oscar_third_deg
 	ftpHost = "prep.ai.mit.edu:21"
 	ftpDir  = "/gnu/chess"
 )
