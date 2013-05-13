@@ -53,12 +53,9 @@ func (c *Conn) Close() error {
 // Send an FTP command and return the response code and message. The expectCode is given
 // as argument to textproto.ReadResponse to signify the expected FTP response code.
 func (c *Conn) Cmd(expectCode int, format string, args ...interface{}) (code int, message string, err error) {
-	id, err := c.conn.Cmd(format, args...)
 	if err != nil {
 		return 0, "", err
 	}
-	c.conn.StartResponse(id)
-	defer c.conn.EndResponse(id)
 	code, message, err = c.conn.ReadResponse(expectCode)
 	return
 }
