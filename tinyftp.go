@@ -177,17 +177,17 @@ func (c *Conn) NameList(dir string, dconn net.Conn) (dirList []string, code int,
 }
 
 // Return the size of the given file
-func (c *Conn) Size(fname string) (size uint64, code int, message string, err error) {
+func (c *Conn) Size(fname string) (size int64, code int, message string, err error) {
 	code, message, err = c.Cmd(213, "SIZE %s", fname)
 	if err != nil {
 		return 0, code, message, err
 	}
-	size, err = strconv.ParseUint(message, 10, 64)
+	size, err = strconv.ParseInt(message, 10, 64)
 	return
 }
 
 // Start next transfer at the given size
-func (c *Conn) Rest(size uint64) (code int, message string, err error) {
+func (c *Conn) Rest(size int64) (code int, message string, err error) {
 	code, message, err = c.Cmd(3, "REST %v", size)
 	if err != nil {
 		return code, message, err
