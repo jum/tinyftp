@@ -17,8 +17,8 @@ import (
 	"net"
 	"net/textproto"
 	"regexp"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 type Conn struct {
@@ -35,7 +35,7 @@ func NewConn(nconn io.ReadWriteCloser) (conn *Conn, code int, message string, er
 }
 
 // Dial connects to the given address on the given network using net.Dial
-// and then returns a new Conn for the connection. 
+// and then returns a new Conn for the connection.
 func Dial(network, addr string) (conn *Conn, code int, message string, err error) {
 	nconn, err := net.Dial(network, addr)
 	if err != nil {
@@ -120,15 +120,15 @@ func (c *Conn) Passive() (addr string, code int, message string, err error) {
 	if matches == nil {
 		return "", code, message, fmt.Errorf("Cannot parse PASV response: %s", message)
 	}
-	ph , err := strconv.Atoi(matches[5])
+	ph, err := strconv.Atoi(matches[5])
 	if err != nil {
 		return "", code, message, err
 	}
-	pl , err := strconv.Atoi(matches[6])
+	pl, err := strconv.Atoi(matches[6])
 	if err != nil {
 		return "", code, message, err
 	}
-	port := strconv.Itoa((ph << 8)|pl)
+	port := strconv.Itoa((ph << 8) | pl)
 	addr = strings.Join(matches[1:5], ".") + ":" + port
 	return
 }
@@ -136,9 +136,9 @@ func (c *Conn) Passive() (addr string, code int, message string, err error) {
 // List the specified directory.
 func (c *Conn) List(dir string, dconn net.Conn) (dirList []string, code int, message string, err error) {
 	if len(dir) != 0 {
-		code, message, err = c.Cmd(150, "LIST %s", dir)
+		code, message, err = c.Cmd(1, "LIST %s", dir)
 	} else {
-		code, message, err = c.Cmd(150, "LIST")
+		code, message, err = c.Cmd(1, "LIST")
 	}
 	if err != nil {
 		return nil, code, message, err
@@ -158,9 +158,9 @@ func (c *Conn) List(dir string, dconn net.Conn) (dirList []string, code int, mes
 // List the specified directory, names only.
 func (c *Conn) NameList(dir string, dconn net.Conn) (dirList []string, code int, message string, err error) {
 	if len(dir) != 0 {
-		code, message, err = c.Cmd(150, "NLST %s", dir)
+		code, message, err = c.Cmd(1, "NLST %s", dir)
 	} else {
-		code, message, err = c.Cmd(150, "NLST")
+		code, message, err = c.Cmd(1, "NLST")
 	}
 	if err != nil {
 		return nil, code, message, err
@@ -198,7 +198,7 @@ func (c *Conn) Rest(size int64) (code int, message string, err error) {
 
 // Retrieve the named file
 func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int, message string, err error) {
-	code, message, err = c.Cmd(150, "RETR %s", fname)
+	code, message, err = c.Cmd(1, "RETR %s", fname)
 	if err != nil {
 		return nil, code, message, err
 	}
@@ -212,7 +212,7 @@ func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int
 
 // Retrieve the named file to the given io.Writer.
 func (c *Conn) RetrieveTo(fname string, dconn net.Conn, w io.Writer) (written int64, code int, message string, err error) {
-	code, message, err = c.Cmd(150, "RETR %s", fname)
+	code, message, err = c.Cmd(1, "RETR %s", fname)
 	if err != nil {
 		return 0, code, message, err
 	}
