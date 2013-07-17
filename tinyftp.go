@@ -136,9 +136,9 @@ func (c *Conn) Passive() (addr string, code int, message string, err error) {
 // List the specified directory.
 func (c *Conn) List(dir string, dconn net.Conn) (dirList []string, code int, message string, err error) {
 	if len(dir) != 0 {
-		code, message, err = c.Cmd(125, "LIST %s", dir)
+		code, message, err = c.Cmd(1, "LIST %s", dir)
 	} else {
-		code, message, err = c.Cmd(125, "LIST")
+		code, message, err = c.Cmd(1, "LIST")
 	}
 	if err != nil {
 		return nil, code, message, err
@@ -158,9 +158,9 @@ func (c *Conn) List(dir string, dconn net.Conn) (dirList []string, code int, mes
 // List the specified directory, names only.
 func (c *Conn) NameList(dir string, dconn net.Conn) (dirList []string, code int, message string, err error) {
 	if len(dir) != 0 {
-		code, message, err = c.Cmd(125, "NLST %s", dir)
+		code, message, err = c.Cmd(1, "NLST %s", dir)
 	} else {
-		code, message, err = c.Cmd(125, "NLST")
+		code, message, err = c.Cmd(1, "NLST")
 	}
 	if err != nil {
 		return nil, code, message, err
@@ -198,7 +198,7 @@ func (c *Conn) Rest(size int64) (code int, message string, err error) {
 
 // Retrieve the named file
 func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int, message string, err error) {
-	code, message, err = c.Cmd(125, "RETR %s", fname)
+	code, message, err = c.Cmd(1, "RETR %s", fname)
 	if err != nil {
 		return nil, code, message, err
 	}
@@ -212,7 +212,7 @@ func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int
 
 // Retrieve the named file to the given io.Writer.
 func (c *Conn) RetrieveTo(fname string, dconn net.Conn, w io.Writer) (written int64, code int, message string, err error) {
-	code, message, err = c.Cmd(125, "RETR %s", fname)
+	code, message, err = c.Cmd(1, "RETR %s", fname)
 	if err != nil {
 		return 0, code, message, err
 	}
