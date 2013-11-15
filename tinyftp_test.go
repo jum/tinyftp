@@ -2,8 +2,8 @@ package tinyftp
 
 import (
 	"net"
-	"time"
 	"testing"
+	"time"
 )
 
 const (
@@ -76,5 +76,12 @@ func TestTinyFTP1(t *testing.T) {
 }
 
 func TestTinyFTP2(t *testing.T) {
-	testNameList(t, ftpHost2, ftpDir2 + time.Now().Format("20060102"))
+	testNameList(t, ftpHost2, ftpDir2+time.Now().Format("20060102"))
+}
+
+func TestTinyFTP3(t *testing.T) {
+	_, _, _, err := DialTimeout("tcp", "localhost:21", time.Nanosecond)
+	if neterr, ok := err.(net.Error); ok && !neterr.Timeout() {
+		t.Fatal("Expected a timeout to occur")
+	}
 }
