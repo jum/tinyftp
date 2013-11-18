@@ -19,6 +19,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Conn struct {
@@ -38,6 +39,17 @@ func NewConn(nconn io.ReadWriteCloser) (conn *Conn, code int, message string, er
 // and then returns a new Conn for the connection.
 func Dial(network, addr string) (conn *Conn, code int, message string, err error) {
 	nconn, err := net.Dial(network, addr)
+	if err != nil {
+		return nil, 0, "", err
+	}
+	conn, code, message, err = NewConn(nconn)
+	return
+}
+
+// DialTimeout connects to the given address on the given network with a timeout and
+// then returns a new Conn for the connection.
+func DialTimeout(network, addr string, timeout time.Duration) (conn *Conn, code int, message string, err error) {
+	nconn, err := net.DialTimeout(network, addr, timeout)
 	if err != nil {
 		return nil, 0, "", err
 	}
