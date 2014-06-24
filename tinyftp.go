@@ -165,7 +165,10 @@ func (c *Conn) List(dir string, dconn net.Conn) (dirList []string, code int, mes
 	if err != nil {
 		return nil, code, message, err
 	}
-	dconn.Close()
+	err = dconn.Close()
+	if err != nil {
+		return nil, code, message, err
+	}
 
 	code, message, err = c.conn.ReadResponse(2)
 	return
@@ -191,7 +194,10 @@ func (c *Conn) NameList(dir string, dconn net.Conn) (dirList []string, code int,
 	if err != nil {
 		return nil, code, message, err
 	}
-	dconn.Close()
+	err = dconn.Close()
+	if err != nil {
+		return nil, code, message, err
+	}
 
 	code, message, err = c.conn.ReadResponse(2)
 	return
@@ -228,7 +234,10 @@ func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int
 	if err != nil {
 		return nil, code, message, err
 	}
-	dconn.Close()
+	err = dconn.Close()
+	if err != nil {
+		return nil, code, message, err
+	}
 
 	code, message, err = c.conn.ReadResponse(2)
 	return
@@ -246,7 +255,10 @@ func (c *Conn) RetrieveTo(fname string, dconn net.Conn, w io.Writer) (written in
 	if err != nil {
 		return 0, code, message, err
 	}
-	dconn.Close()
+	err = dconn.Close()
+	if err != nil {
+		return 0, code, message, err
+	}
 
 	code, message, err = c.conn.ReadResponse(2)
 	return
