@@ -147,6 +147,8 @@ func (c *Conn) Passive() (addr string, code int, message string, err error) {
 
 // List the specified directory.
 func (c *Conn) List(dir string, dconn net.Conn) (dirList []string, code int, message string, err error) {
+	defer dconn.Close()
+
 	if len(dir) != 0 {
 		code, message, err = c.Cmd(1, "LIST %s", dir)
 	} else {
@@ -163,12 +165,19 @@ func (c *Conn) List(dir string, dconn net.Conn) (dirList []string, code int, mes
 	if err != nil {
 		return nil, code, message, err
 	}
+	err = dconn.Close()
+	if err != nil {
+		return nil, code, message, err
+	}
+
 	code, message, err = c.conn.ReadResponse(2)
 	return
 }
 
 // List the specified directory, names only.
 func (c *Conn) NameList(dir string, dconn net.Conn) (dirList []string, code int, message string, err error) {
+	defer dconn.Close()
+
 	if len(dir) != 0 {
 		code, message, err = c.Cmd(1, "NLST %s", dir)
 	} else {
@@ -185,6 +194,11 @@ func (c *Conn) NameList(dir string, dconn net.Conn) (dirList []string, code int,
 	if err != nil {
 		return nil, code, message, err
 	}
+	err = dconn.Close()
+	if err != nil {
+		return nil, code, message, err
+	}
+
 	code, message, err = c.conn.ReadResponse(2)
 	return
 }
@@ -210,6 +224,8 @@ func (c *Conn) Rest(size int64) (code int, message string, err error) {
 
 // Retrieve the named file
 func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int, message string, err error) {
+	defer dconn.Close()
+
 	code, message, err = c.Cmd(1, "RETR %s", fname)
 	if err != nil {
 		return nil, code, message, err
@@ -218,12 +234,19 @@ func (c *Conn) Retrieve(fname string, dconn net.Conn) (contents []byte, code int
 	if err != nil {
 		return nil, code, message, err
 	}
+	err = dconn.Close()
+	if err != nil {
+		return nil, code, message, err
+	}
+
 	code, message, err = c.conn.ReadResponse(2)
 	return
 }
 
 // Retrieve the named file to the given io.Writer.
 func (c *Conn) RetrieveTo(fname string, dconn net.Conn, w io.Writer) (written int64, code int, message string, err error) {
+	defer dconn.Close()
+
 	code, message, err = c.Cmd(1, "RETR %s", fname)
 	if err != nil {
 		return 0, code, message, err
@@ -232,6 +255,11 @@ func (c *Conn) RetrieveTo(fname string, dconn net.Conn, w io.Writer) (written in
 	if err != nil {
 		return 0, code, message, err
 	}
+	err = dconn.Close()
+	if err != nil {
+		return 0, code, message, err
+	}
+
 	code, message, err = c.conn.ReadResponse(2)
 	return
 }
