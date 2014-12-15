@@ -62,6 +62,17 @@ func (c *Conn) Close() error {
 	return c.conn.Close()
 }
 
+// Switch underlaying connection to a new instance.
+// (Necessary to handle SSL/TLS connections for explicit FTPS servers) 
+func (c *Conn) SwitchTo(nconn io.ReadWriteCloser) {
+	c.conn = textproto.NewConn(nconn)
+}
+
+// "AUTH SSL" command to start SSL/TLS on connection.
+func (c *Conn) AuthSSL(mode string) (code int, message string, err error) {
+	return c.Cmd(234, "AUTH SSL")
+}
+
 // Send an FTP command and return the response code and message. The expectCode is given
 // as argument to textproto.ReadResponse to signify the expected FTP response code.
 func (c *Conn) Cmd(expectCode int, format string, args ...interface{}) (code int, message string, err error) {
