@@ -63,7 +63,7 @@ func (c *Conn) Close() error {
 }
 
 // Switch underlaying connection to a new instance.
-// (Necessary to handle SSL/TLS connections for explicit FTPS servers) 
+// (Necessary to handle SSL/TLS connections for explicit FTPS servers)
 func (c *Conn) SwitchTo(nconn io.ReadWriteCloser) {
 	c.conn = textproto.NewConn(nconn)
 }
@@ -264,11 +264,55 @@ func (c *Conn) RetrieveTo(fname string, dconn net.Conn, w io.Writer) (written in
 	}
 	written, err = io.Copy(w, dconn)
 	if err != nil {
-		return 0, code, message, err
+		return written, code, message, err
 	}
 	err = dconn.Close()
 	if err != nil {
+		return written, code, message, err
+	}
+
+	code, message, err = c.conn.ReadResponse(2)
+	return
+}
+
+// Upload the named file
+func (c *Conn) Upload(fname string, dconn net.Conn, contents []byte) (written int64, code int, message string, err error) {
+	defer dconn.Close()
+
+	code, message, err = c.Cmd(1, "STOR %s", fname)
+	if err != nil {
 		return 0, code, message, err
+	}
+	writer := bufio.NewWriter(dconn)
+	n, err := writer.Write(contents)
+	written = int64(n)
+	if err != nil {
+		return written, code, message, err
+	}
+	err = dconn.Close()
+	if err != nil {
+		return written, code, message, err
+	}
+
+	code, message, err = c.conn.ReadResponse(2)
+	return
+}
+
+//Upload the named file from the given io.Reader
+func (c *Conn) UploadFrom(fname string, dconn net.Conn, r io.Reader) (written int64, code int, message string, err error) {
+	defer dconn.Close()
+
+	code, message, err = c.Cmd(1, "STOR %s", fname)
+	if err != nil {
+		return written, code, message, err
+	}
+	written, err = io.Copy(dconn, r)
+	if err != nil {
+		return written, code, message, err
+	}
+	err = dconn.Close()
+	if err != nil {
+		return written, code, message, err
 	}
 
 	code, message, err = c.conn.ReadResponse(2)
