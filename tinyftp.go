@@ -289,6 +289,10 @@ func (c *Conn) Upload(fname string, dconn net.Conn, contents []byte) (written in
 	if err != nil {
 		return written, code, message, err
 	}
+	err = writer.Flush()
+	if err != nil {
+		return written, code, message, err
+	}
 	err = dconn.Close()
 	if err != nil {
 		return written, code, message, err
